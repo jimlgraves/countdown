@@ -85,20 +85,22 @@
         targetDate = new Date(targetYear, targetMonth, targetDay);
       }
 
+      // Normalize both dates to midnight
       const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const targetMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
 
-      const diffTime = targetMidnight.getTime() - todayMidnight.getTime();
-      const diffDays = diffTime / (1000 * 60 * 60 * 24);
+      // ✅ Include both today and target day
+      const diffDays = Math.round((targetMidnight - todayMidnight) / (1000 * 60 * 60 * 24)) + 1;
 
       const weeks = Math.floor(diffDays / 7);
       const days = diffDays % 7;
 
+      // ✅ Count workdays including both today and the target day
       let workDays = 0;
       const tempDate = new Date(todayMidnight);
       while (tempDate <= targetMidnight) {
         const day = tempDate.getDay();
-        if (day !== 0 && day !== 6) workDays++;
+        if (day !== 0 && day !== 6) workDays++; // Monday–Friday
         tempDate.setDate(tempDate.getDate() + 1);
       }
 
