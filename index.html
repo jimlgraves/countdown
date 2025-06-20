@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Mobile Background Countdown</title>
+<title>Mobile Background Test - Direct HTML</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body {
@@ -61,70 +61,10 @@
 
   <div class="countdown-container">
     <div id="static-line" class="countdown-line">Countdown to August 29</div>
-    <div id="weeks-days-line" class="countdown-line"></div>
-    <div id="total-days-line" class="countdown-line"></div>
-    <div id="work-days-line" class="countdown-line"></div>
+    <div id="weeks-days-line" class="countdown-line">Weeks & Days: DIRECT HTML TEST</div>
+    <div id="total-days-line" class="countdown-line">Total Days: DIRECT HTML TEST</div>
+    <div id="work-days-line" class="countdown-line">Work Days: DIRECT HTML TEST</div>
   </div>
 
-  <script>
-    function updateCountdown() {
-      const today = new Date();
-      let targetYear = today.getFullYear();
-      const targetMonth = 7; // August (0-indexed)
-      const targetDay = 29;
-
-      let targetDate = new Date(targetYear, targetMonth, targetDay);
-
-      // If Aug 29 has passed this year, set target for next year
-      const todayNoTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const targetDateNoTime = new Date(targetYear, targetMonth, targetDay);
-
-      if (todayNoTime > targetDateNoTime) {
-        targetYear++;
-        targetDate = new Date(targetYear, targetMonth, targetDay);
-      }
-
-      // Calculate total days (from midnight today to midnight target date)
-      const diffTime = targetDate.getTime() - today.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Total days, rounded up
-
-      // Calculate weeks and remaining days
-      const weeks = Math.floor(diffDays / 7);
-      const days = diffDays % 7;
-
-      // Calculate work days
-      let workDays = 0;
-      let tempDate = new Date(today.getTime()); 
-      
-      // Adjust tempDate to start from midnight of the next day if current time is not midnight
-      if (today.getHours() > 0 || today.getMinutes() > 0 || today.getSeconds() > 0) {
-          tempDate.setDate(tempDate.getDate() + 1); // Move to start of next day
-          tempDate.setHours(0, 0, 0, 0); // Set to midnight
-      } else {
-          // If already midnight, just set to midnight to be safe
-          tempDate.setHours(0, 0, 0, 0);
-      }
-
-      const targetDateNoTimeForWorkDays = new Date(targetYear, targetMonth, targetDay);
-      targetDateNoTimeForWorkDays.setHours(0, 0, 0, 0); // Ensure target is also midnight
-
-      while (tempDate <= targetDateNoTimeForWorkDays) { // Iterate until (and including) the target day
-        const dayOfWeek = tempDate.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
-        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Not Sunday (0) and Not Saturday (6)
-          workDays++;
-        }
-        tempDate.setDate(tempDate.getDate() + 1); // Move to the next day
-      }
-
-      document.getElementById('weeks-days-line').textContent = `${weeks} weeks and ${days} days`;
-      document.getElementById('total-days-line').textContent = `${diffDays} days`;
-      document.getElementById('work-days-line').textContent = `${workDays} work days`;
-    }
-
-    // Update countdown immediately and then every minute
-    updateCountdown();
-    setInterval(updateCountdown, 1000 * 60); // Update every minute
-  </script>
-
-</body>
+  </body>
 </html>
