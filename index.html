@@ -89,18 +89,18 @@
       const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const targetMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
 
-      // ✅ Include both today and target day
-      const diffDays = Math.round((targetMidnight - todayMidnight) / (1000 * 60 * 60 * 24)) + 1;
+      // ✅ Use floor + 1 to include both today and target day
+      const diffDays = Math.floor((targetMidnight - todayMidnight) / (1000 * 60 * 60 * 24)) + 1;
 
       const weeks = Math.floor(diffDays / 7);
       const days = diffDays % 7;
 
-      // ✅ Count workdays including both today and the target day
+      // ✅ Count workdays including today and target
       let workDays = 0;
       const tempDate = new Date(todayMidnight);
       while (tempDate <= targetMidnight) {
         const day = tempDate.getDay();
-        if (day !== 0 && day !== 6) workDays++; // Monday–Friday
+        if (day !== 0 && day !== 6) workDays++;
         tempDate.setDate(tempDate.getDate() + 1);
       }
 
