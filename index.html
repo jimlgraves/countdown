@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Countdown to August 29</title>
   <style>
+    /* Base styles for all screen sizes */
     html, body {
       margin: 0;
       padding: 0;
@@ -14,7 +16,7 @@
       background-repeat: no-repeat;
       background-position: center center;
       background-size: cover;
-      background-attachment: scroll;
+      background-attachment: fixed; /* Changed to fixed for better mobile scrolling */
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: white;
       display: flex;
@@ -27,24 +29,43 @@
 
     h1 {
       font-size: 3em;
-      margin-bottom: 40px;
+      margin-bottom: 20px; /* Reduced margin for smaller screens */
+      padding: 0 15px; /* Added horizontal padding to prevent text from touching edges */
+      box-sizing: border-box; /* Include padding in the element's total width */
     }
 
     .countdown {
       font-size: 2.5em;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 20px 40px;
+      background: rgba(0, 0, 0, 0.5); /* Slightly darker overlay for better readability */
+      padding: 15px 25px; /* Adjusted padding */
       border-radius: 15px;
-      margin: 15px;
+      margin: 10px; /* Adjusted margin between countdown boxes */
+      max-width: 90%; /* Ensure countdown boxes don't get too wide on small screens */
+      box-sizing: border-box; /* Include padding in the element's total width */
     }
 
+    /* Media query for smaller screens (e.g., mobile phones) */
     @media (max-width: 600px) {
       h1 {
-        font-size: 2em;
+        font-size: 2em; /* Smaller font size for the heading */
+        margin-bottom: 15px;
       }
       .countdown {
-        font-size: 1.5em;
-        padding: 15px 25px;
+        font-size: 1.5em; /* Smaller font size for countdown numbers */
+        padding: 10px 20px;
+        margin: 8px;
+      }
+    }
+
+    /* Media query for very small screens (e.g., older or very narrow phones) */
+    @media (max-width: 400px) {
+      h1 {
+        font-size: 1.6em;
+      }
+      .countdown {
+        font-size: 1.2em;
+        padding: 8px 15px;
+        margin: 6px;
       }
     }
   </style>
@@ -69,12 +90,12 @@
       const weeks = Math.floor(diffDays / 7);
       const days = diffDays % 7;
 
-      // Count working days (Mon–Fri) including today and August 29
       let workingDays = 0;
       let date = new Date(today);
-      while (date <= target) {
+      // Ensure the loop includes the target date if it's a working day
+      while (date.getTime() <= target.getTime()) {
         const day = date.getDay();
-        if (day !== 0 && day !== 6) {
+        if (day !== 0 && day !== 6) { // 0 for Sunday, 6 for Saturday
           workingDays++;
         }
         date.setDate(date.getDate() + 1);
@@ -90,8 +111,10 @@
         `${workingDays} working day${workingDays !== 1 ? 's' : ''}`;
     }
 
+    // Initial call
     updateCountdown();
-    setInterval(updateCountdown, 1000 * 60 * 60); // update hourly
+    // Update hourly
+    setInterval(updateCountdown, 1000 * 60 * 60);
   </script>
 </body>
 </html>
