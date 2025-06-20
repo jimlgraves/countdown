@@ -8,16 +8,19 @@
     margin: 0;
     padding: 0;
     background-image: url('https://i.imgur.com/48Tdj9e.jpeg');
-    background-size: cover; /* Ensures the image covers the entire viewport */
+    /* Changed to 'contain' to ensure the entire image is visible */
+    background-size: contain;
     background-position: center; /* Centers the image */
     background-repeat: no-repeat; /* Prevents the image from repeating */
-    min-height: 100vh; /* Ensures the body takes at least the full height of the viewport */
-    display: flex; /* Use flexbox to ensure content (if any) is placed correctly */
+    /* Ensure body takes full viewport height for proper sizing */
+    min-height: 100vh;
+    display: flex; /* Use flexbox for centering content */
     flex-direction: column;
     align-items: center;
     justify-content: center;
     color: white; /* Example text color if you add content */
     font-family: sans-serif; /* Example font */
+    background-color: #000; /* Optional: Sets a background color for the empty space if 'contain' is used */
   }
 
   /* Optional: Add content here, for example a message */
@@ -32,7 +35,7 @@
 <body>
   <div class="content">
     <h1>Welcome!</h1>
-    <p>This is a mobile-friendly page with a background image.</p>
+    <p>This page should now show the full background image.</p>
   </div>
 </body>
 </html>
