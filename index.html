@@ -1,41 +1,55 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Mobile Background</title>
+<title>Mobile Background Test</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body {
     margin: 0;
     padding: 0;
     background-image: url('https://i.imgur.com/48Tdj9e.jpeg');
-    /* Changed to 'contain' to ensure the entire image is visible */
+
+    /* This property ensures the ENTIRE image is visible.
+       It will NOT crop the image itself. If the image's shape
+       (aspect ratio) doesn't match your screen, it will add
+       empty space (like bars) to the sides or top/bottom. */
     background-size: contain;
-    background-position: center; /* Centers the image */
-    background-repeat: no-repeat; /* Prevents the image from repeating */
-    /* Ensure body takes full viewport height for proper sizing */
-    min-height: 100vh;
-    display: flex; /* Use flexbox for centering content */
+
+    background-position: center;   /* Centers the image within the viewport */
+    background-repeat: no-repeat;  /* Ensures the image doesn't tile */
+    background-attachment: scroll; /* Important for mobile: prevents fixed issues */
+
+    /* This bright background color will show if there's any empty space
+       around your image after 'contain' scales it. If the image is truly
+       cropped, and you still see bright magenta, something else is at play. */
+    background-color: #FF00FF; /* A very noticeable color (magenta) */
+
+    min-height: 100vh; /* Ensures the body covers the full viewport height */
+    width: 100vw;      /* Ensures the body covers the full viewport width */
+    display: flex;     /* Use flexbox to center any content */
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: white; /* Example text color if you add content */
+    color: white; /* Example text color */
     font-family: sans-serif; /* Example font */
-    background-color: #000; /* Optional: Sets a background color for the empty space if 'contain' is used */
+    box-sizing: border-box; /* Ensures padding/border are included in width/height */
   }
 
-  /* Optional: Add content here, for example a message */
   .content {
     text-align: center;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background for readability */
+    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background for readability */
     border-radius: 10px;
+    margin: 20px; /* Add some margin around content */
+    max-width: 90%; /* Ensure content doesn't overflow horizontally */
   }
 </style>
 </head>
 <body>
   <div class="content">
-    <h1>Welcome!</h1>
-    <p>This page should now show the full background image.</p>
+    <h1>Background Test Page</h1>
+    <p>With `background-size: contain;` the *entire* image should be visible.</p>
+    <p>If you see bright magenta, that's the empty space. The image itself should not be cut off.</p>
   </div>
 </body>
 </html>
