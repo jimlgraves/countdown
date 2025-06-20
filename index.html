@@ -12,7 +12,7 @@
       height: 100vh;
       width: 100%;
       min-height: 250px; /* Ensures flexbox behaves well even on very short screens */
-      background-color: #000; /* Fallback for transparency, or fill bars */
+      background-color: #000; /* This will fill the "bars" if object-fit:contain is used */
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: white;
       display: flex;
@@ -32,8 +32,8 @@
       left: 0;
       width: 100%;
       height: 100%;
-      object-fit: contain; /* CRUCIAL: Makes the entire image fit */
-      z-index: -2; /* Puts the image behind all other content and overlay */
+      object-fit: contain; /* Makes the entire image fit */
+      z-index: 0; /* Changed: Image layer */
       user-select: none; /* Prevent image selection/dragging */
       pointer-events: none; /* Allow clicks to pass through to content */
     }
@@ -46,49 +46,43 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
-      z-index: -1; /* Behind content, above image */
+      z-index: 1; /* Changed: Overlay layer, above image */
     }
 
     h1 {
-      /* Fluid font size: Minimum 1.6rem, preferred 6vw, maximum 3em */
       font-size: clamp(1.6rem, 6vw, 3em);
       margin-bottom: 20px;
-      padding: 0 10px; /* Slightly reduced horizontal padding */
+      padding: 0 10px;
       box-sizing: border-box;
       position: relative; /* Ensure it's above overlay */
-      z-index: 1;
-      max-width: 95%; /* Ensure heading doesn't go too wide */
-      line-height: 1.2; /* Adjust line height if words break awkwardly */
+      z-index: 2; /* Changed: Content layer, above overlay */
+      max-width: 95%;
+      line-height: 1.2;
     }
 
     .countdown {
-      /* Fluid font size: Minimum 1.2rem, preferred 4.5vw, maximum 2.5em */
       font-size: clamp(1.2rem, 4.5vw, 2.5em);
-      background: rgba(0, 0, 0, 0.6); /* Slightly darker for better contrast */
-      padding: 15px 25px; /* Maintain good internal padding */
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px 25px;
       border-radius: 15px;
-      margin: 8px 10px; /* Reduced vertical margin, added horizontal margin */
-      max-width: 90%; /* Ensure countdown boxes don't get too wide */
+      margin: 8px 10px;
+      max-width: 90%;
       box-sizing: border-box;
       position: relative; /* Ensure it's above overlay */
-      z-index: 1;
-      line-height: 1.3; /* Adjust line height for readability */
-      /* Consider adding word-break if very long words are an issue on narrow screens */
-      /* word-break: break-word; */
+      z-index: 2; /* Changed: Content layer, above overlay */
+      line-height: 1.3;
     }
 
     /* Original media queries are now less critical for font size due to clamp(),
        but still useful for specific layout tweaks if needed. */
     @media (max-width: 600px) {
-      /* Font sizes are now handled by clamp() */
       h1 { margin-bottom: 15px; }
-      .countdown { margin: 6px 8px; } /* Slightly reduce margins further */
+      .countdown { margin: 6px 8px; }
     }
 
     @media (max-width: 400px) {
-      /* Font sizes are now handled by clamp() */
-      h1 { padding: 0 5px; } /* Even smaller horizontal padding for heading */
-      .countdown { padding: 10px 15px; } /* Adjust padding for very small countdowns */
+      h1 { padding: 0 5px; }
+      .countdown { padding: 10px 15px; }
     }
   </style>
 </head>
@@ -122,14 +116,4 @@
         if (day !== 0 && day !== 6) { // 0 for Sunday, 6 for Saturday
           workingDays++;
         }
-        date.setDate(date.getDate() + 1);
-      }
-
-      document.getElementById('weeksDays').textContent =
-        `${weeks} week${weeks !== 1 ? 's' : ''} and ${days} day${days !== 1 ? 's' : ''}`;
-
-      document.getElementById('daysOnly').textContent =
-        `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
-
-      document.getElementById('workingDays').textContent =
-        `${workingDays} working day${workingDays
+        date.setDate(date.getDate() +
