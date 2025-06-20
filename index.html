@@ -1,55 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Mobile Background Test</title>
+<title>Mobile Background Countdown</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
   body {
     margin: 0;
     padding: 0;
     background-image: url('https://i.imgur.com/48Tdj9e.jpeg');
-
-    /* This property ensures the ENTIRE image is visible.
-       It will NOT crop the image itself. If the image's shape
-       (aspect ratio) doesn't match your screen, it will add
-       empty space (like bars) to the sides or top/bottom. */
     background-size: contain;
-
-    background-position: center;   /* Centers the image within the viewport */
-    background-repeat: no-repeat;  /* Ensures the image doesn't tile */
-    background-attachment: scroll; /* Important for mobile: prevents fixed issues */
-
-    /* This bright background color will show if there's any empty space
-       around your image after 'contain' scales it. If the image is truly
-       cropped, and you still see bright magenta, something else is at play. */
-    background-color: #FF00FF; /* A very noticeable color (magenta) */
-
-    min-height: 100vh; /* Ensures the body covers the full viewport height */
-    width: 100vw;      /* Ensures the body covers the full viewport width */
-    display: flex;     /* Use flexbox to center any content */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: scroll;
+    background-color: #FF00FF; /* Will show if there's any empty space */
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: white; /* Example text color */
-    font-family: sans-serif; /* Example font */
-    box-sizing: border-box; /* Ensures padding/border are included in width/height */
+    color: white; /* Text color for the countdown */
+    font-family: 'Arial', sans-serif; /* A clear, readable font */
+    box-sizing: border-box;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Adds shadow for readability against background */
   }
 
-  .content {
+  .countdown-container {
     text-align: center;
     padding: 20px;
     background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background for readability */
     border-radius: 10px;
-    margin: 20px; /* Add some margin around content */
-    max-width: 90%; /* Ensure content doesn't overflow horizontally */
+    margin: 20px;
+    max-width: 90%;
+    box-sizing: border-box; /* Include padding/border in element's total width and height */
+  }
+
+  .countdown-line {
+    font-size: 1.2em; /* Slightly larger font for general lines */
+    margin-bottom: 8px;
+  }
+
+  #static-line {
+    font-size: 1.5em; /* Larger font for the static line */
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  /* Optional: Adjust font sizes for very small screens if needed */
+  @media (max-width: 400px) {
+    .countdown-line {
+      font-size: 1em;
+    }
+    #static-line {
+      font-size: 1.3em;
+    }
   }
 </style>
 </head>
 <body>
-  <div class="content">
-    <h1>Background Test Page</h1>
-    <p>With `background-size: contain;` the *entire* image should be visible.</p>
-    <p>If you see bright magenta, that's the empty space. The image itself should not be cut off.</p>
+
+  <div class="countdown-container">
+    <div id="static-line" class="countdown-line">Countdown to August 29</div>
+    <div id="weeks-days-line" class="countdown-line"></div>
+    <div id="total-days-line" class="countdown-line"></div>
+    <div id="work-days-line" class="countdown-line"></div>
   </div>
+
+  <script>
+    function updateCountdown() {
+      const today = new Date();
+      let targetYear = today.getFullYear();
+      let targetDate = new Date(targetYear, 7, 29); // Month is 0-indexed (August is 7)
+
+      // If Aug 29 has passed this year, set target for next year
+      if (today > targetDate) {
+        targetYear++;
+        targetDate = new Date(targetYear, 7, 29);
+      }
+
+      const diffTime = targetDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Total days
+
+      // Calculate weeks and remaining days
+      const weeks = Math.floor(diffDays / 7);
+      const days = diffDays % 7;
+
+      // Calculate work days
+      let workDays = 0;
+      let tempDate = new Date(today.getTime()); // Start from today
+      while (tempDate < targetDate) {
+        const dayOfWeek = tempDate.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Not Sunday (0) and Not Saturday (6)
+          workDays++;
+        }
+        tempDate.setDate(tempDate.getDate() + 1); // Move to the next day
+      }
+
+      document.getElementById('weeks-days-line').textContent = `${weeks} weeks and ${days} days until Aug 29`;
+      document.getElementById('total-days-line').textContent = `${diffDays} days until Aug 29`;
+      document.getElementById('work-days-line').textContent = `${workDays} work days until Aug 29`;
+    }
+
+    // Update countdown immediately and then every second
+    updateCountdown();
+    setInterval(updateCountdown, 1000 * 60 * 60); // Update every hour, or change to 1000 for every second
+  </script>
+
 </body>
 </html>
