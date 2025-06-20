@@ -13,10 +13,10 @@
       width: 100%;
       background-color: #000;
       background-image: url('https://i.imgur.com/48Tdj9e.jpeg');
-      background-repeat: no-repeat;
+      background-repeat: no-repeat; /* Changed: Ensures image doesn't tile */
       background-position: center center;
-      background-size: cover;
-      background-attachment: fixed; /* Changed to fixed for better mobile scrolling */
+      background-size: contain; /* Changed: Displays the entire image */
+      background-attachment: fixed;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: white;
       display: flex;
@@ -29,29 +29,29 @@
 
     h1 {
       font-size: 3em;
-      margin-bottom: 20px; /* Reduced margin for smaller screens */
-      padding: 0 15px; /* Added horizontal padding to prevent text from touching edges */
-      box-sizing: border-box; /* Include padding in the element's total width */
+      margin-bottom: 20px;
+      padding: 0 15px;
+      box-sizing: border-box;
     }
 
     .countdown {
       font-size: 2.5em;
-      background: rgba(0, 0, 0, 0.5); /* Slightly darker overlay for better readability */
-      padding: 15px 25px; /* Adjusted padding */
+      background: rgba(0, 0, 0, 0.5);
+      padding: 15px 25px;
       border-radius: 15px;
-      margin: 10px; /* Adjusted margin between countdown boxes */
-      max-width: 90%; /* Ensure countdown boxes don't get too wide on small screens */
-      box-sizing: border-box; /* Include padding in the element's total width */
+      margin: 10px;
+      max-width: 90%;
+      box-sizing: border-box;
     }
 
     /* Media query for smaller screens (e.g., mobile phones) */
     @media (max-width: 600px) {
       h1 {
-        font-size: 2em; /* Smaller font size for the heading */
+        font-size: 2em;
         margin-bottom: 15px;
       }
       .countdown {
-        font-size: 1.5em; /* Smaller font size for countdown numbers */
+        font-size: 1.5em;
         padding: 10px 20px;
         margin: 8px;
       }
@@ -104,17 +104,4 @@
       document.getElementById('weeksDays').textContent =
         `${weeks} week${weeks !== 1 ? 's' : ''} and ${days} day${days !== 1 ? 's' : ''}`;
 
-      document.getElementById('daysOnly').textContent =
-        `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
-
-      document.getElementById('workingDays').textContent =
-        `${workingDays} working day${workingDays !== 1 ? 's' : ''}`;
-    }
-
-    // Initial call
-    updateCountdown();
-    // Update hourly
-    setInterval(updateCountdown, 1000 * 60 * 60);
-  </script>
-</body>
-</html>
+      document.
