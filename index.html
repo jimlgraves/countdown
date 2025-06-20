@@ -12,7 +12,8 @@
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: scroll;
-    background-color: #FF00FF; /* Will show if there's any empty space */
+    /* Removed magenta. Using black as a fallback color for empty space */
+    background-color: #000;
     min-height: 100vh;
     width: 100vw;
     display: flex;
@@ -32,7 +33,7 @@
     border-radius: 10px;
     margin: 20px;
     max-width: 90%;
-    box-sizing: border-box; /* Include padding/border in element's total width and height */
+    box-sizing: border-box;
   }
 
   .countdown-line {
@@ -70,16 +71,27 @@
     function updateCountdown() {
       const today = new Date();
       let targetYear = today.getFullYear();
-      let targetDate = new Date(targetYear, 7, 29); // Month is 0-indexed (August is 7)
+      const targetMonth = 7; // August (0-indexed)
+      const targetDay = 29;
+
+      let targetDate = new Date(targetYear, targetMonth, targetDay);
 
       // If Aug 29 has passed this year, set target for next year
-      if (today > targetDate) {
+      // To correctly check if it has passed, compare with full date (including time up to the second)
+      // or compare only dates. For this countdown, comparing dates is simpler.
+      const todayNoTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const targetDateNoTime = new Date(targetYear, targetMonth, targetDay);
+
+      if (todayNoTime > targetDateNoTime) {
         targetYear++;
-        targetDate = new Date(targetYear, 7, 29);
+        targetDate = new Date(targetYear, targetMonth, targetDay);
       }
 
+      // Calculate total days (from midnight today to midnight target date)
+      // We add 1 day's worth of milliseconds to targetDate to ensure the target day is fully counted
+      // Or, more accurately, calculate difference in days by rounding up from today's perspective.
       const diffTime = targetDate.getTime() - today.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Total days
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Total days, rounded up
 
       // Calculate weeks and remaining days
       const weeks = Math.floor(diffDays / 7);
@@ -87,24 +99,12 @@
 
       // Calculate work days
       let workDays = 0;
-      let tempDate = new Date(today.getTime()); // Start from today
-      while (tempDate < targetDate) {
-        const dayOfWeek = tempDate.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
-        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Not Sunday (0) and Not Saturday (6)
-          workDays++;
-        }
-        tempDate.setDate(tempDate.getDate() + 1); // Move to the next day
-      }
-
-      document.getElementById('weeks-days-line').textContent = `${weeks} weeks and ${days} days until Aug 29`;
-      document.getElementById('total-days-line').textContent = `${diffDays} days until Aug 29`;
-      document.getElementById('work-days-line').textContent = `${workDays} work days until Aug 29`;
-    }
-
-    // Update countdown immediately and then every second
-    updateCountdown();
-    setInterval(updateCountdown, 1000 * 60 * 60); // Update every hour, or change to 1000 for every second
-  </script>
-
-</body>
-</html>
+      let tempDate = new Date(today.getTime()); // Start from current time
+      // Adjust tempDate to start from midnight of the next day if current time is not midnight
+      // This ensures we're counting full remaining days for work days correctly.
+      if (today.getHours() > 0 || today.getMinutes() > 0 || today.getSeconds() > 0) {
+          tempDate.setDate(tempDate.getDate() + 1); // Move to start of next day
+          tempDate.setHours(0, 0, 0, 0); // Set to midnight
+      } else {
+          // If already midnight, just set to midnight to be safe
+          tempDate.
