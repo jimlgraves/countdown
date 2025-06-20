@@ -11,12 +11,7 @@
       padding: 0;
       height: 100vh;
       width: 100%;
-      background-color: #000;
-      background-image: url('https://i.imgur.com/48Tdj9e.jpeg');
-      background-repeat: no-repeat;
-      background-position: center center;
-      background-size: cover;          /* Default: Image covers entire background */
-      background-attachment: fixed;
+      background-color: #000; /* Fallback for transparency, or fill bars */
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: white;
       display: flex;
@@ -25,6 +20,32 @@
       align-items: center;
       text-align: center;
       text-shadow: 2px 2px 6px #000;
+      position: relative; /* Needed for positioning the background image */
+      overflow: hidden; /* Prevent scrollbars if image slightly overflows */
+    }
+
+    /* Style for the actual image element */
+    .background-img {
+      position: absolute; /* Position relative to body */
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* CRUCIAL: Makes the entire image fit */
+      z-index: -1; /* Puts the image behind all other content */
+      user-select: none; /* Prevent image selection/dragging */
+      pointer-events: none; /* Allow clicks to pass through to content */
+    }
+
+    /* Overlay for readability */
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+      z-index: -1; /* Behind content, above image */
     }
 
     h1 {
@@ -32,29 +53,23 @@
       margin-bottom: 20px;
       padding: 0 15px;
       box-sizing: border-box;
+      position: relative; /* Ensure it's above overlay */
+      z-index: 1;
     }
 
     .countdown {
       font-size: 2.5em;
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.6); /* Slightly darker for better contrast */
       padding: 15px 25px;
       border-radius: 15px;
       margin: 10px;
       max-width: 90%;
       box-sizing: border-box;
+      position: relative; /* Ensure it's above overlay */
+      z-index: 1;
     }
 
-    /* --- Media Queries for Responsiveness --- */
-
-    /* For screens that are taller than they are wide (e.g., portrait mobile) */
-    @media (max-aspect-ratio: 1/1) {
-      html, body {
-        background-size: contain;   /* Show the entire image */
-        background-repeat: no-repeat; /* Prevent tiling if there's extra space */
-      }
-    }
-
-    /* General mobile layout adjustments */
+    /* Media query for smaller screens (e.g., mobile phones) */
     @media (max-width: 600px) {
       h1 {
         font-size: 2em;
@@ -67,7 +82,7 @@
       }
     }
 
-    /* Very small screens */
+    /* Media query for very small screens (e.g., older or very narrow phones) */
     @media (max-width: 400px) {
       h1 {
         font-size: 1.6em;
@@ -81,6 +96,9 @@
   </style>
 </head>
 <body>
+  <img src="https://i.imgur.com/48Tdj9e.jpeg" alt="Background image" class="background-img">
+  <div class="overlay"></div>
+
   <h1>Countdown to August 29</h1>
   <div class="countdown" id="weeksDays"></div>
   <div class="countdown" id="daysOnly"></div>
@@ -89,7 +107,48 @@
   <script>
     function updateCountdown() {
       const today = new Date();
-      const target = new Date(today.getFullYear(), 7, 29); // August = 7 (0-based)
+      // Set target to August 29 of the current year
+      let target = new Date(today.getFullYear(), 7, 29); // August = 7 (0-based)
 
-      // If today is past August 29, set target to next year's August 29
-      if (today.getMonth() > 7 || (today.getMonth() === 7
+      // If current date is past August 29, set target to next year's August 29
+      if (today.getMonth() > 7 || (today.getMonth() === 7 && today.getDate() > 29)) {
+        target.setFullYear(today.getFullYear() + 1);
+      }
+      // If today IS August 29, the calculation will correctly yield 0 or very small diff.
+      // No special handling needed unless you want a specific "Today is the day!" message.
+
+
+      const oneDay = 1000 * 60 * 60 * 24;
+      const diffDays = Math.ceil((target - today) / oneDay);
+      const weeks = Math.floor(diffDays / 7);
+      const days = diffDays % 7;
+
+      let workingDays = 0;
+      let date = new Date(today);
+      // Ensure the loop includes the target date if it's a working day
+      // Use getTime() for robust date comparison
+      while (date.getTime() <= target.getTime()) {
+        const day = date.getDay();
+        if (day !== 0 && day !== 6) { // 0 for Sunday, 6 for Saturday
+          workingDays++;
+        }
+        date.setDate(date.getDate() + 1);
+      }
+
+      document.getElementById('weeksDays').textContent =
+        `${weeks} week${weeks !== 1 ? 's' : ''} and ${days} day${days !== 1 ? 's' : ''}`;
+
+      document.getElementById('daysOnly').textContent =
+        `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+
+      document.getElementById('workingDays').textContent =
+        `${workingDays} working day${workingDays !== 1 ? 's' : ''}`;
+    }
+
+    // Initial call
+    updateCountdown();
+    // Update hourly
+    setInterval(updateCountdown, 1000 * 60 * 60);
+  </script>
+</body>
+</html>
