@@ -13,9 +13,9 @@
       width: 100%;
       background-color: #000;
       background-image: url('https://i.imgur.com/48Tdj9e.jpeg');
-      background-repeat: no-repeat; /* Changed: Ensures image doesn't tile */
-      background-position: center center;
-      background-size: contain; /* Changed: Displays the entire image */
+      background-repeat: no-repeat;
+      background-position: top center; /* Changed: Focuses on the top-center of the image */
+      background-size: cover;          /* Retained: Image still covers the entire background */
       background-attachment: fixed;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: white;
@@ -81,9 +81,15 @@
       const today = new Date();
       const target = new Date(today.getFullYear(), 7, 29); // August = 7 (0-based)
 
-      if (today > target) {
+      // If today is past August 29, set target to next year's August 29
+      if (today.getMonth() > 7 || (today.getMonth() === 7 && today.getDate() > 29)) {
         target.setFullYear(today.getFullYear() + 1);
+      } else if (today.getMonth() === 7 && today.getDate() === 29) {
+        // If today is August 29, show "0 days" or "Today is August 29!"
+        // For simplicity here, it will calculate 0 days difference.
+        // You might add a special message here if desired.
       }
+
 
       const oneDay = 1000 * 60 * 60 * 24;
       const diffDays = Math.ceil((target - today) / oneDay);
@@ -93,6 +99,7 @@
       let workingDays = 0;
       let date = new Date(today);
       // Ensure the loop includes the target date if it's a working day
+      // Use getTime() for robust date comparison
       while (date.getTime() <= target.getTime()) {
         const day = date.getDay();
         if (day !== 0 && day !== 6) { // 0 for Sunday, 6 for Saturday
@@ -104,4 +111,17 @@
       document.getElementById('weeksDays').textContent =
         `${weeks} week${weeks !== 1 ? 's' : ''} and ${days} day${days !== 1 ? 's' : ''}`;
 
-      document.
+      document.getElementById('daysOnly').textContent =
+        `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+
+      document.getElementById('workingDays').textContent =
+        `${workingDays} working day${workingDays !== 1 ? 's' : ''}`;
+    }
+
+    // Initial call
+    updateCountdown();
+    // Update hourly
+    setInterval(updateCountdown, 1000 * 60 * 60);
+  </script>
+</body>
+</html>
