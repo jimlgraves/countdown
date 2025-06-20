@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Countdown to August 29</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      width: 100%;
+      background-image: url('https://i.imgur.com/48Tdj9e.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      text-shadow: 2px 2px 6px #000;
+    }
+
+    h1 {
+      font-size: 3em;
+      margin-bottom: 40px;
+    }
+
+    .countdown {
+      font-size: 2.5em;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 20px 40px;
+      border-radius: 15px;
+      margin: 15px;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+      .countdown {
+        font-size: 1.5em;
+        padding: 15px 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Countdown to August 29</h1>
+  <div class="countdown" id="weeksDays"></div>
+  <div class="countdown" id="daysOnly"></div>
+  <div class="countdown" id="workingDays"></div>
+
+  <script>
+    function updateCountdown() {
+      const today = new Date();
+      const target = new Date(today.getFullYear(), 7, 29); // August is month 7 (0-based)
+
+      if (today > target) {
+        target.setFullYear(today.getFullYear() + 1);
+      }
+
+      const oneDay = 1000 * 60 * 60 * 24;
+      const diffDays = Math.ceil((target - today) / oneDay);
+      const weeks = Math.floor(diffDays / 7);
+      const days = diffDays % 7;
+
+      // Count working days (Mon–Fri) including today and August 29
+      let workingDays = 0;
+      let date = new Date(today);
+      while (date <= target) {
+        const day = date.getDay();
+        if (day !== 0 && day !== 6) {
+          workingDays++;
+        }
+        date.setDate(date.getDate() + 1);
+      }
+
+      document.getElementById('weeksDays').textContent =
+        `${weeks} week${weeks !== 1 ? 's' : ''} and ${days} day${days !== 1 ? 's' : ''}`;
+
+      document.getElementById('daysOnly').textContent =
+        `${diffDays} day${diffDays !== 1 ? 's' : ''}`;
+
+      document.getElementById('workingDays').textContent =
+        `${workingDays} working day${workingDays !== 1 ? 's' : ''}`;
+    }
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000 * 60 * 60); // update hourly
+  </script>
+</body>
+</html>
