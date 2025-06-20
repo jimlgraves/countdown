@@ -1,129 +1,116 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Mobile Background Countdown</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    background-image: url('https://i.imgur.com/48Tdj9e.jpeg');
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-color: #000; /* Fallback black for empty space */
-    min-height: 100vh;
-    width: 100vw;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white; /* Text color for the countdown */
-    font-family: 'Arial', sans-serif; /* A clear, readable font */
-    box-sizing: border-box;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Adds shadow for readability */
-  }
+  <title>Mobile Background Countdown</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('https://i.imgur.com/48Tdj9e.jpeg');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: scroll;
+      background-color: #000;
+      min-height: 100vh;
+      width: 100vw;
+      box-sizing: border-box;
+    }
 
-  .countdown-container {
-    text-align: center;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.6); /* Semi-transparent background for readability */
-    border-radius: 10px;
-    margin: 20px;
-    max-width: 90%;
-    box-sizing: border-box;
-  }
+    .wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+      box-sizing: border-box;
+    }
 
-  .countdown-line {
-    font-size: 1.2em; /* Slightly larger font for general lines */
-    margin-bottom: 8px;
-  }
+    .countdown-container {
+      text-align: center;
+      background-color: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      padding: 20px;
+      max-width: 90%;
+      box-sizing: border-box;
+    }
 
-  #static-line {
-    font-size: 1.5em; /* Larger font for the static line */
-    font-weight: bold;
-    margin-bottom: 15px;
-  }
-
-  /* Optional: Adjust font sizes for very small screens if needed */
-  @media (max-width: 400px) {
     .countdown-line {
-      font-size: 1em;
+      font-size: 1.2em;
+      margin-bottom: 8px;
     }
+
     #static-line {
-      font-size: 1.3em;
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-bottom: 15px;
     }
-  }
-</style>
+
+    @media (max-width: 400px) {
+      .countdown-line {
+        font-size: 1em;
+      }
+      #static-line {
+        font-size: 1.3em;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <div class="countdown-container">
-    <div id="static-line" class="countdown-line">Countdown to August 29</div>
-    <div id="weeks-days-line" class="countdown-line"></div>
-    <div id="total-days-line" class="countdown-line"></div>
-    <div id="work-days-line" class="countdown-line"></div>
+  <div class="wrapper">
+    <div class="countdown-container">
+      <h1 id="static-line" class="countdown-line">Countdown to August 29</h1>
+      <p id="weeks-days-line" class="countdown-line"></p>
+      <p id="total-days-line" class="countdown-line"></p>
+      <p id="work-days-line" class="countdown-line"></p>
+    </div>
   </div>
 
   <script>
     function updateCountdown() {
-      const today = new Date();
-      let targetYear = today.getFullYear();
+      const now = new Date();
+      let targetYear = now.getFullYear();
       const targetMonth = 7; // August (0-indexed)
       const targetDay = 29;
 
       let targetDate = new Date(targetYear, targetMonth, targetDay);
-
-      // If Aug 29 has passed this year, set target for next year
-      const todayNoTime = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-      const targetDateNoTime = new Date(targetYear, targetMonth, targetDay);
-
-      if (todayNoTime > targetDateNoTime) {
+      if (now > targetDate) {
         targetYear++;
         targetDate = new Date(targetYear, targetMonth, targetDay);
       }
 
-      // Calculate total days (from midnight today to midnight target date)
-      const diffTime = targetDate.getTime() - today.getTime();
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Total days, rounded up
+      // Normalize times to midnight for both dates
+      const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const targetMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
 
-      // Calculate weeks and remaining days
+      const diffTime = targetMidnight.getTime() - todayMidnight.getTime();
+      const diffDays = diffTime / (1000 * 60 * 60 * 24); // Already integer since both at midnight
+
       const weeks = Math.floor(diffDays / 7);
       const days = diffDays % 7;
 
-      // Calculate work days
+      // Calculate work days (Mon–Fri), inclusive
       let workDays = 0;
-      let tempDate = new Date(today.getTime()); 
-      
-      // Adjust tempDate to start from midnight of the next day if current time is not midnight
-      if (today.getHours() > 0 || today.getMinutes() > 0 || today.getSeconds() > 0) {
-          tempDate.setDate(tempDate.getDate() + 1); // Move to start of next day
-          tempDate.setHours(0, 0, 0, 0); // Set to midnight
-      } else {
-          // If already midnight, just set to midnight to be safe
-          tempDate.setHours(0, 0, 0, 0);
-      }
-
-      const targetDateNoTimeForWorkDays = new Date(targetYear, targetMonth, targetDay);
-      targetDateNoTimeForWorkDays.setHours(0, 0, 0, 0); // Ensure target is also midnight
-
-      while (tempDate <= targetDateNoTimeForWorkDays) { // Iterate until (and including) the target day
-        const dayOfWeek = tempDate.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
-        if (dayOfWeek !== 0 && dayOfWeek !== 6) { // Not Sunday (0) and Not Saturday (6)
-          workDays++;
-        }
-        tempDate.setDate(tempDate.getDate() + 1); // Move to the next day
+      const tempDate = new Date(todayMidnight);
+      while (tempDate <= targetMidnight) {
+        const day = tempDate.getDay();
+        if (day !== 0 && day !== 6) workDays++;
+        tempDate.setDate(tempDate.getDate() + 1);
       }
 
       document.getElementById('weeks-days-line').textContent = `${weeks} weeks and ${days} days`;
-      document.getElementById('total-days-line').textContent = `${diffDays} days`;
+      document.getElementById('total-days-line').textContent = `${diffDays} total days`;
       document.getElementById('work-days-line').textContent = `${workDays} work days`;
     }
 
-    // Update countdown immediately and then every minute
     updateCountdown();
-    setInterval(updateCountdown, 1000 * 60); // Update every minute
+    setInterval(updateCountdown, 60 * 1000);
   </script>
 
 </body>
